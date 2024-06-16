@@ -117,14 +117,14 @@ def get_notion_properties_by_date(start_date, end_date, headers, database_id):
             "and": [
                 {
                     "property": "날짜",
-                    "date": {"on_or_after": start_date, "time_zone": "Asia/Seoul"},
+                    "date": {"on_or_after": start_date+"T00:00:00+09:00", "time_zone": "Asia/Seoul"},
                 },
                 {
                     "property": "날짜",
-                    "date": {"on_or_before": end_date, "time_zone": "Asia/Seoul"},
+                    "date": {"on_or_before": end_date+"T23:59:59+09:00", "time_zone": "Asia/Seoul"},
                 },
                 {"property": "예약상태", "select": {"does_not_equal": "CXL"}},
-                {"property": "상태", "formula": {"string": {"does_not_equal": "종료"}}},
+                {"property": "상태", "formula": {"string": {"does_not_equal": "⚫️ 종료"}}},
             ]
         },
         "sorts": [{"property": "날짜", "direction": "ascending"}],
