@@ -78,6 +78,7 @@ class SlackAPI:
                         > {name_match[props['item']]}
                         > `변경 전`  {previous_value}
                         > `변경 후`  {updated_value}
+
                     """
                 )
                 concat += changed
