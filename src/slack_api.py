@@ -138,7 +138,7 @@ class SlackAPI:
             manager = content["manager"]
             reference = content["reference"]  # str
             status = content["status"]  # 오늘, 내일, 일주일 후
-            notion_public_link = content["notion_public_link"]
+            notion_public_link = content["notion_public_link"] 
             start_time = dt.strftime(
                 dt.strptime(content["start_time"], "%Y-%m-%dT%H:%M:%SZ"),
                 "%m/%d %a %H:%M",
@@ -147,13 +147,14 @@ class SlackAPI:
                 dt.strptime(content["end_time"], "%Y-%m-%dT%H:%M:%SZ"),
                 "%m/%d %a %H:%M",
             )
-            # NOTE: 상태 formula가 UTC 시간 때문에 문제가 있음
+            # NOTE: 상태 formula가 UTC 시간 때문에 문제가 있음 -> notion formula에서 -09:00 강제 설정으로 해결
             prompt += textwrap.dedent(
                 f"""\
-                    > {status.split(' ')[0]}  _*{event_name}*_
-                    > `{' '.join(start_time.split(' ')[:-1])}({start_time.split(' ')[-1]}~{end_time.split(' ')[-1]})`
+                    > {status} `{' '.join(start_time.split(' ')[:-1])}({start_time.split(' ')[-1]}~{end_time.split(' ')[-1]})`
+                    > _*{event_name}*_
                     > {place} | {manager}
-                    > {reference}
+                    > {reference if reference else '참조사항 없음'}
+
                 """
             )
 
