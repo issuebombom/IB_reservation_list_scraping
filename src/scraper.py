@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from src import logger
 import time
@@ -22,7 +23,10 @@ def get_cookies(wings_target_url, company_id, user_id, password):
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     # WebDriver 서비스 설정
-    service = Service(ChromeDriverManager().install())
+
+    # NOTE: chromedriver 설치를 x86환경에서 arm64 아키텍처로 자동설치하는 문제 발생
+    # service = Service(ChromeDriverManager().install())
+    service = ChromeService(ChromeDriverManager().install())
 
     # WebDriver 객체 생성
     driver = webdriver.Chrome(service=service, options=chrome_options)
