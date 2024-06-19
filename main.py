@@ -118,13 +118,16 @@ def run(start_date: int, end_date: int):
     # 슬랙 알림 전송
     # 변경사항 유무에 따른 알림 전송
     if alarm_properties['changed']:
-        subject, prompt = slack_schedule_bot.changed_alarm_prompt(alarm_properties['changed'])
+        # 시간 오름차순 정렬
+        sorted_changed = sorted(alarm_properties['changed'], key=lambda x: dt.strptime(x['start_time'], "%Y-%m-%dT%H:%M:%SZ"))
+        subject, prompt = slack_schedule_bot.changed_alarm_prompt(sorted_changed)
         slack_schedule_bot.slack_alarm_bot(subject, prompt)
         
     # 신규 생성 내역 알림 전송
     if alarm_properties['new']:
-        # 신규 생성 내역 알림 전송
-        subject, prompt = slack_schedule_bot.created_alarm_prompt(alarm_properties['new'])
+        # 시간 오름차순 정렬
+        sorted_new = sorted(alarm_properties['new'], key=lambda x: dt.strptime(x['start_time'], "%Y-%m-%dT%H:%M:%SZ"))
+        subject, prompt = slack_schedule_bot.created_alarm_prompt(sorted_new)
         slack_schedule_bot.slack_alarm_bot(subject, prompt)
 
     logger.info("=====FINISHED SCRAPE=====")
