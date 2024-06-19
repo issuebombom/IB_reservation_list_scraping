@@ -85,6 +85,7 @@ def run(start_date: int, end_date: int):
                         'event_number': notion_properties['event_number'],
                         'event_name': values['event_name'],
                         'start_time': values['start_time'],
+                        'place': values['place'],
                         'changed_properties': changed_properties,
                     }
                 )

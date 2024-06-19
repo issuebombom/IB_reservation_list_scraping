@@ -57,6 +57,7 @@ class SlackAPI:
         for content in contents:
             event_number = content["event_number"]  # 노출이 불필요해 보여 안쓰고 있음
             event_name = content["event_name"]
+            place = content["place"]
             start_time = dt.strftime(
                 dt.strptime(content["start_time"], "%Y-%m-%dT%H:%M:%SZ"),
                 "%m/%d %a %H:%M",
@@ -64,7 +65,7 @@ class SlackAPI:
 
             title = textwrap.dedent(
                 f"""\
-                    *{event_name}* [{start_time}]
+                    _*{event_name}*_ [{start_time}] `{place}`
                 """
             )
 
