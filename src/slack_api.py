@@ -1,5 +1,6 @@
 from config import ENV
 from datetime import datetime as dt
+from datetime import timedelta
 import textwrap
 import requests
 import ast
@@ -139,8 +140,8 @@ class SlackAPI:
             place = content["place"]
             manager = content["manager"]
             reference = content["reference"]  # str
-            status = content["status"]  # 오늘, 내일, 일주일 후
-            notion_public_link = content["notion_public_link"] 
+            status = self.__event_status_message(content["start_time"], content["end_time"])
+            notion_public_link = content["notion_public_link"]
             start_time = dt.strftime(
                 dt.strptime(content["start_time"], "%Y-%m-%dT%H:%M:%SZ"),
                 "%m/%d %a %H:%M",
@@ -150,6 +151,7 @@ class SlackAPI:
                 "%m/%d %a %H:%M",
             )
             # NOTE: 상태 formula가 UTC 시간 때문에 문제가 있음 -> notion formula에서 -09:00 강제 설정으로 해결
+            # NOTE: 위 방법도 해결되지 않아 내부에서 직접 코드 구현
             prompt += textwrap.dedent(
                 f"""\
                     > {status} `{' '.join(start_time.split(' ')[:-1])}({start_time.split(' ')[-1]}~{end_time.split(' ')[-1]})`
@@ -190,3 +192,25 @@ class SlackAPI:
             value = "".join(value).replace("\n", " ")  # 슬랙에서 좀 더 깔끔하게 보이려면 \n 제거해야 함
 
         return "없음" if value == "" else value
+
+    def __event_status_message(self, start, end):
+        start = dt.strptime(start, "%Y-%m-%dT%H:%M:%SZ")
+        end = dt.strptime(end, "%Y-%m-%dT%H:%M:%SZ")
+
+        now = dt.now()
+        today = now.date()
+
+        if end <= now:
+            status = "⚫️ 종료"
+        elif start <= now and end > now:
+            status = "🔴 진행 중"
+        elif start.date() == today:
+            status = "🟢 오늘"
+        elif start.date() == today + timedelta(days=1):
+            status = "🔵 내일"
+        elif today + timedelta(days=2) <= start.date() < today + timedelta(days=8):
+            status = "🟡 일주일 내"
+        else:
+            status = "⚪️ 시작 전"
+
+        return status

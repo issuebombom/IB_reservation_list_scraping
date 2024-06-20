@@ -153,7 +153,6 @@ def get_notion_properties_by_date(start_date, end_date, headers, database_id):
                     "start_time": result["properties"]["날짜"]["date"]["start"].split(".")[0] + "Z",  # '2024-06-10T18:00:00Z'
                     "end_time": result["properties"]["날짜"]["date"]["end"].split(".")[0] + "Z",  # '2024-06-10T18:00:00Z'
                     "place": result["properties"]["장소"]["select"]["name"],
-                    "status": result["properties"]["상태(API서버용)"]["formula"]["string"],  # '일주일 내', '오늘', '내일'
                     "manager": result["properties"]["매니저"]["select"]["name"],
                     "reference": textwrap.shorten(
                         " ".join([obj["plain_text"] for obj in result["properties"]["특이사항"]["rich_text"]]), width=100, placeholder="...(생략)"
