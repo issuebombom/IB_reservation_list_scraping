@@ -124,7 +124,8 @@ def get_notion_properties_by_date(start_date, end_date, headers, database_id):
                     "date": {"on_or_before": end_date+"T23:59:59+09:00", "time_zone": "Asia/Seoul"},
                 },
                 {"property": "예약상태", "select": {"does_not_equal": "CXL"}},
-                {"property": "상태(API서버용)", "formula": {"string": {"does_not_equal": "⚫️ 종료"}}},
+                # NOTE: notion api 서버와 local간 timezone 이슈로 사용 중지
+                # {"property": "상태", "formula": {"string": {"does_not_equal": "⚫️ 종료"}}},
             ]
         },
         "sorts": [{"property": "날짜", "direction": "ascending"}],
