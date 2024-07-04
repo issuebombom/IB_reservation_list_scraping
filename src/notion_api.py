@@ -20,12 +20,11 @@ def set_properties(page_values):
         "행사타입": {"select": {"name": page_values["type"]}},
         "매니저": {"select": {"name": page_values["manager"]}},
         "행사번호": {"number": page_values["event_number"]},
+        "특이사항": {"rich_text": [{"type": "text", "text": {"content": "", "link": None}}]},
     }
 
     # 참조사항이 있는 경우 추가
     if page_values["reference"]:
-        page["특이사항"] = {"rich_text": None}
-
         # rich text 추가
         page["특이사항"]["rich_text"] = [{"type": "text", "text": {"content": text, "link": None}} for text in page_values["reference"]]
 
