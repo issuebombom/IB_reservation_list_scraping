@@ -67,7 +67,7 @@ def get_notion_properties_by_event_id(event_id, headers, database_id):
             "place": results[0]["properties"]["장소"]["select"]["name"],
             "status": results[0]["properties"]["예약상태"]["select"]["name"],
             "manager": results[0]["properties"]["매니저"]["select"]["name"],
-            "reference": [obj["plain_text"] for obj in results[0]["properties"]["특이사항"]["rich_text"]],  # list
+            "reference": [obj["plain_text"] for obj in results[0]["properties"]["특이사항"]["rich_text"]],  # list: 빈 값의 경우 -> ['']
         }
 
         return notion_properties

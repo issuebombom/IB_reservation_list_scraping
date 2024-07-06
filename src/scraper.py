@@ -107,11 +107,10 @@ def get_reference_preview(fnc_name_org, fnc_rsvn_no, event_no, session_id):
     # NOTE: 예약상태가 CXL 되면 참조사항 접근 불가 처리됨
     res = requests.post(REFERENCE_URL, headers=headers, data=data, cookies=cookies)
     res.raise_for_status()  # ok가 아닐 경우 raise -> wrapped_logging으로 이동
-
-    result = []
     preview = json.loads(res.text)
 
-    # 참조등록 정보 가져오기 (빈 값일 경우 빈 리스트 출력)
-    for row in preview["rows"]:
-        result.append(row["TEXT"].strip() + "\n")
-    return result
+    # 참조등록 정보 가져오기 (빈 값일 경우 [''] 출력)
+    if preview["rows"]:
+        return [row["TEXT"].strip() + "\n" for row in preview["rows"]]
+    else:
+        return [""]

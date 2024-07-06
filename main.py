@@ -48,7 +48,7 @@ def run(start_date: int, end_date: int):
         values['status'] = row['FNC_STATUS_CODE'] # 'ACT', '...'
         values['manager'] = row['SALE_MANAGER'] # sale manager
         values['event_number'] = int(row['EVENT_NO']) # 행사 번호 -> 고유ID로 활용
-        values['reference'] = [] # 참조 수집 전 init
+        values['reference'] = [''] # 참조 수집 전 init
         
         if values['status'] != 'CXL': # 취소된 행사는 참조사항에 접근 불가함
             values['reference'] = scraper.get_reference_preview(row['FNC_NAME_ORG'], int(row['FNC_RSVN_NO']), int(row['EVENT_NO']), SESSION_ID)
