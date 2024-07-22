@@ -135,8 +135,9 @@ def run(start_date: int, end_date: int):
 
 if __name__ == "__main__":
     # 로그인 후 쿠키에서 세션ID 획득
-    cookies = scraper.get_cookies(ENV["WINGS_TARGET_URL"], ENV['WINGS_COMPANY_ID'], 
-                                  ENV['WINGS_USER_ID'], ENV['WINGS_USER_PW'])
+    driver = scraper.gw_login(ENV["GW_TARGET_URL"], ENV['GW_COMPANY_ID'], 
+                                  ENV['GW_USER_ID'], ENV['GW_USER_PW'])
+    cookies = scraper.get_cookies(driver, quit=True)
 
     SESSION_ID = cookies['JSESSIONID'] # update 필요
     NOTION_API_KEY = ENV['NOTION_API_KEY']
