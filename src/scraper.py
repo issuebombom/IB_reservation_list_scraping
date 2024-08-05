@@ -12,10 +12,7 @@ import requests
 import json
 
 
-def gw_login(wings_target_url, company_id, user_id, password):
-
-    # Chrome WebDriver 경로 설정 (적절한 경로로 변경하세요)
-    # chrome_driver_path = '/path/to/chromedriver'
+def gw_login(gw_target_url, company_id, user_id, password):
 
     # Chrome 옵션 설정
     chrome_options = Options()
@@ -25,16 +22,14 @@ def gw_login(wings_target_url, company_id, user_id, password):
     chrome_options.add_argument("window-size=1920,1080")
 
     # WebDriver 서비스 설정
-
-    # NOTE: chromedriver 설치를 x86환경에서 arm64 아키텍처로 자동설치하는 문제 발생
-    # service = Service(ChromeDriverManager().install())
-    service = ChromeService(ChromeDriverManager().install())
+    chromedriver_path = ChromeDriverManager().install()
+    service = ChromeService(chromedriver_path)
 
     # WebDriver 객체 생성
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     # 웹사이트 열기
-    driver.get(wings_target_url)  # 로그인 페이지 URL로 변경하세요
+    driver.get(gw_target_url)  # 로그인 페이지 URL로 변경하세요
 
     # 로그인 폼에 데이터 입력
     company_input = driver.find_element(By.ID, "company")  # 올바른 필드 이름으로 변경하세요
@@ -67,11 +62,11 @@ def get_cookies(driver: WebDriver, quit: bool=False):
 
 
 @logger.wrapped_logging
-def get_schedule(session_id, search_date):
-    URL = "https://wingspms.sanhait.com/pms/biz/sc03_2100_V50/searchListMonthlyEventSchedule.do"
+def get_schedule(gw_schedule_url, gw_schedule_referer, session_id, search_date):
+    URL = gw_schedule_url
 
     headers = {
-        "referer": "https://wingspms.sanhait.com/pms",
+        "referer": gw_schedule_referer,
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     }
 

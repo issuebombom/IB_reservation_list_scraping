@@ -18,7 +18,7 @@ def run(start_date: int, end_date: int):
     # 스케줄 수집
     results = []
     for i in range(start_date, end_date + 1):
-        result = scraper.get_schedule(SESSION_ID, i)
+        result = scraper.get_schedule(GW_SCHEDULE_URL, GW_SCHEDULE_REFERER, SESSION_ID, i)
         results += result['rows']
     
     logger.info(f"총 수집된 스케줄의 개수: {len(results)}")
@@ -138,6 +138,9 @@ if __name__ == "__main__":
     driver = scraper.gw_login(ENV["GW_TARGET_URL"], ENV['GW_COMPANY_ID'], 
                                   ENV['GW_USER_ID'], ENV['GW_USER_PW'])
     cookies = scraper.get_cookies(driver, quit=True)
+
+    GW_SCHEDULE_URL = ENV["GW_SCHEDULE_URL"]
+    GW_SCHEDULE_REFERER = ENV["GW_SCHEDULE_REFERER"]
 
     SESSION_ID = cookies['JSESSIONID'] # update 필요
     NOTION_API_KEY = ENV['NOTION_API_KEY']
