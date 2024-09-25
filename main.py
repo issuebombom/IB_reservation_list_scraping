@@ -51,7 +51,7 @@ def run(start_date: int, end_date: int):
         values['reference'] = [''] # 참조 수집 전 init
         
         if values['status'] != 'CXL': # 취소된 행사는 참조사항에 접근 불가함
-            values['reference'] = scraper.get_reference_preview(row['FNC_NAME_ORG'], int(row['FNC_RSVN_NO']), int(row['EVENT_NO']), SESSION_ID)
+            values['reference'] = scraper.get_reference_preview(row['FNC_NAME_ORG'], int(row['FNC_RSVN_NO']), int(row['EVENT_NO']), GW_REFERENCE_URL, SESSION_ID)
 
         # 행사 번호를 통해 이미 노션에 등록 유무를 확인
         notion_properties = notion_api.get_notion_properties_by_event_id(values['event_number'], NOTION_API_HEADERS, NOTION_DATABASE_ID)
@@ -140,6 +140,7 @@ if __name__ == "__main__":
     cookies = scraper.get_cookies(driver, quit=True)
 
     GW_SCHEDULE_URL = ENV["GW_SCHEDULE_URL"]
+    GW_REFERENCE_URL = ENV["GW_REFERENCE_URL"]
     GW_SCHEDULE_REFERER = ENV["GW_SCHEDULE_REFERER"]
 
     SESSION_ID = cookies['JSESSIONID'] # update 필요

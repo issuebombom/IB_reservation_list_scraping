@@ -87,9 +87,7 @@ def get_schedule(gw_schedule_url, gw_schedule_referer, session_id, search_date):
 
 # 각 행사의 참조사항을 가져온다.
 @logger.wrapped_logging
-def get_reference_preview(fnc_name_org, fnc_rsvn_no, event_no, session_id):
-    REFERENCE_URL = "https://wingspms.sanhait.com/pms/biz/sc02_0403/searchReservationReferencePreview.do"
-
+def get_reference_preview(fnc_name_org, fnc_rsvn_no, event_no, gw_reference_url, session_id):
     headers = {
         "referer": "https://wingspms.sanhait.com/pms",
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
@@ -106,7 +104,7 @@ def get_reference_preview(fnc_name_org, fnc_rsvn_no, event_no, session_id):
     }
 
     # NOTE: 예약상태가 CXL 되면 참조사항 접근 불가 처리됨
-    res = requests.post(REFERENCE_URL, headers=headers, data=data, cookies=cookies)
+    res = requests.post(gw_reference_url, headers=headers, data=data, cookies=cookies)
     res.raise_for_status()  # ok가 아닐 경우 raise -> wrapped_logging으로 이동
     preview = json.loads(res.text)
 
