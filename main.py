@@ -24,7 +24,8 @@ def run(start_date: int, end_date: int):
     logger.info(f"총 수집된 스케줄의 개수: {len(results)}")
 
     # 데이터베이스 추가
-    for row in tqdm(results, ncols=80, miniters=len(results) * 0.2): # 20% 단위로 표시
+    # ! tqdm 제대로 동작하지 않음 점검 필요 
+    for row in tqdm(results, ncols=80, miniters=len(results) // 5): # 20% 단위로 표시
         values = {}
     
         # time 전처리
