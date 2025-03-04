@@ -20,7 +20,7 @@
 > - 이전 저장 데이터와 수집 데이터 간 비교
 > - API에서 요구하는 body 형식 적용
 > - 신규 등록 정보일 경우 노션 데이터베이스 저장
-> - 변경 사항 있을 경우 update
+> - 변경 사항 있을 경우 update  
 >   <img width="465" alt="스크린샷 2024-07-06 오후 2 32 14" src="https://github.com/issuebombom/IB_reservation_list_scraping/assets/79882498/30c6e2b6-fd77-4a33-bac3-253318475b01">
 
 ### Slack API를 활용하여 필요한 정보를 알림 받음 (행사, 로그 관련)
