@@ -12,6 +12,7 @@ import requests
 import json
 
 
+@logger.wrapped_logging
 def gw_login(gw_target_url, company_id, user_id, password):
 
     # Chrome 옵션 설정
@@ -44,9 +45,13 @@ def gw_login(gw_target_url, company_id, user_id, password):
     # 로그인 처리를 기다림 (적절한 방법으로 대기 시간을 설정하거나 조건을 설정하세요)
     time.sleep(5)  # 예시로 5초 대기
 
+    if driver.find_elements(By.ID, "popup_pw_change"): # 비밀번호 팝업 태그 발견 시 리스트에 요소가 추가됨
+        raise Exception("비밀번호 변경 창 팝업으로 인해 스크랩이 진행되지 않습니다.")
+
     return driver
 
-def get_cookies(driver: WebDriver, quit: bool=False):
+
+def get_cookies(driver: WebDriver, quit: bool = False):
     # 쿠키 가져오기
     cookies = driver.get_cookies()
     cookies_dict = {}
@@ -114,9 +119,9 @@ def get_reference_preview(fnc_name_org, fnc_rsvn_no, event_no, gw_reference_url,
     else:
         return [""]
 
-def get_schedule_screenshot(driver: WebDriver, file_path: str, quit: bool=True):
-    """로그인 후 스케줄 스크린샷
-    """
+
+def get_schedule_screenshot(driver: WebDriver, file_path: str, quit: bool = True):
+    """로그인 후 스케줄 스크린샷"""
     # 별표 클릭
     driver.find_element(By.ID, "btnCat").click()
     time.sleep(0.5)
@@ -126,7 +131,7 @@ def get_schedule_screenshot(driver: WebDriver, file_path: str, quit: bool=True):
     time.sleep(0.5)
 
     # iframe 전환
-    iframe = driver.find_element(By.CSS_SELECTOR, 'iframe')
+    iframe = driver.find_element(By.CSS_SELECTOR, "iframe")
     driver.switch_to.frame(iframe)
 
     # ALL 클릭
@@ -136,7 +141,7 @@ def get_schedule_screenshot(driver: WebDriver, file_path: str, quit: bool=True):
     driver.find_element(By.ID, "frmS_Cxl").click()
 
     # 오늘 날짜 시간 출력
-    today = str(dt.now()).split()[0] # ex. 2024-07-12
+    today = str(dt.now()).split()[0]  # ex. 2024-07-12
 
     # 조회 날짜 선택
     script = f'document.getElementById("frmS_datePic").value = "{today[:7]}";'
@@ -151,7 +156,7 @@ def get_schedule_screenshot(driver: WebDriver, file_path: str, quit: bool=True):
     time.sleep(1)
 
     # 최하단으로 스크롤 (최하단에 위치한 태그를 지정해서 해당 태그가 보이도록 스크롤하는 방식
-    low_element = driver.find_elements(By.CLASS_NAME, 'mv_row_container')[-1]
+    low_element = driver.find_elements(By.CLASS_NAME, "mv_row_container")[-1]
     # 해당 요소로 스크롤하기
     driver.execute_script("arguments[0].scrollIntoView(true);", low_element)
 
