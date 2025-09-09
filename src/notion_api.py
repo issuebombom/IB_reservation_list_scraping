@@ -68,6 +68,7 @@ def get_notion_properties_by_event_id(event_id, headers, database_id):
             "status": results[0]["properties"]["예약상태"]["select"]["name"],
             "manager": results[0]["properties"]["매니저"]["select"]["name"],
             "reference": [obj["plain_text"] for obj in results[0]["properties"]["특이사항"]["rich_text"]],  # list: 빈 값의 경우 -> ['']
+            "notion_link": results[0]["url"],
         }
 
         return notion_properties
@@ -89,6 +90,9 @@ def notion_create_page(database_id, headers, page_values):
     data = json.dumps(new_page)
     res = requests.post(create_url, headers=headers, data=data)
     res.raise_for_status()
+
+    notion_link = res.json()["url"]  # 생성 링크 출력
+    return notion_link
     # print(res, f"[New] 페이지 생성 완료 - {page_values['event_name']} | {page_values['start_time']}")
 
 
@@ -116,11 +120,11 @@ def get_notion_properties_by_date(start_date, end_date, headers, database_id):
             "and": [
                 {
                     "property": "날짜",
-                    "date": {"on_or_after": start_date+"T00:00:00+09:00", "time_zone": "Asia/Seoul"},
+                    "date": {"on_or_after": start_date + "T00:00:00+09:00", "time_zone": "Asia/Seoul"},
                 },
                 {
                     "property": "날짜",
-                    "date": {"on_or_before": end_date+"T23:59:59+09:00", "time_zone": "Asia/Seoul"},
+                    "date": {"on_or_before": end_date + "T23:59:59+09:00", "time_zone": "Asia/Seoul"},
                 },
                 {"property": "예약상태", "select": {"does_not_equal": "CXL"}},
                 # NOTE: notion api 서버와 local간 timezone 이슈로 사용 중지
@@ -155,9 +159,11 @@ def get_notion_properties_by_date(start_date, end_date, headers, database_id):
                     "place": result["properties"]["장소"]["select"]["name"],
                     "manager": result["properties"]["매니저"]["select"]["name"],
                     "reference": textwrap.shorten(
-                        " ".join([obj["plain_text"] for obj in result["properties"]["특이사항"]["rich_text"]]), width=100, placeholder="...(생략)"
+                        " ".join([obj["plain_text"] for obj in result["properties"]["특이사항"]["rich_text"]]),
+                        width=100,
+                        placeholder="...(생략)",
                     ),  # list
-                    "notion_public_link": result["public_url"],
+                    "notion_link": result["url"],
                 }
             )
 

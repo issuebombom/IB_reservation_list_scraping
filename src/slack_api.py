@@ -59,6 +59,7 @@ class SlackAPI:
             event_number = content["event_number"]  # 노출이 불필요해 보여 안쓰고 있음
             event_name = content["event_name"]
             place = content["place"]
+            notion_link = content["notion_link"]
             start_time = dt.strftime(
                 dt.strptime(content["start_time"], "%Y-%m-%dT%H:%M:%SZ"),
                 "%m/%d %a %H:%M",
@@ -80,6 +81,7 @@ class SlackAPI:
                         > {name_match[props['item']]}
                         > `변경 전`  {previous_value}
                         > `변경 후`  {updated_value}
+                        > <{notion_link}|자세히>
 
                     """
                 )
@@ -107,6 +109,7 @@ class SlackAPI:
             )
             manager = content["manager"]
             reference = self.__replace_list_to_str(content["reference"])  # list to str
+            notion_link = contents["notion_link"]
 
             prompt += textwrap.dedent(
                 f"""\
@@ -117,6 +120,7 @@ class SlackAPI:
                     > 담당자: {manager}
                     > 참조사항: 
                     > {textwrap.shorten(reference, width=50, placeholder="...(생략)")}
+                    > <{notion_link}|자세히>
                 """
             )
 
@@ -141,7 +145,7 @@ class SlackAPI:
             manager = content["manager"]
             reference = content["reference"]  # str
             status = self.__event_status_message(content["start_time"], content["end_time"])
-            notion_public_link = content["notion_public_link"]
+            notion_link = content["notion_link"]
             start_time = dt.strftime(
                 dt.strptime(content["start_time"], "%Y-%m-%dT%H:%M:%SZ"),
                 "%m/%d %a %H:%M",
@@ -158,6 +162,7 @@ class SlackAPI:
                     > _*{event_name}*_
                     > {place} | {manager}
                     > {reference if reference else '참조사항 없음'}
+                    > <{notion_link}|자세히>
 
                 """
             )

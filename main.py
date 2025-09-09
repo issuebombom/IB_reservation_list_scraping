@@ -85,13 +85,14 @@ def run(start_date: int, end_date: int):
                         "event_name": values["event_name"],
                         "start_time": values["start_time"],
                         "place": values["place"],
+                        "notion_link": notion_properties["notion_link"],
                         "changed_properties": changed_properties,
                     }
                 )
 
         else:
             # 데이터베이스에 신규 page 생성
-            notion_api.notion_create_page(NOTION_DATABASE_ID, NOTION_API_HEADERS, values)
+            notion_link = notion_api.notion_create_page(NOTION_DATABASE_ID, NOTION_API_HEADERS, values)
 
             # 신규 생성 내역 기록
             alarm_properties["new"].append(
@@ -103,6 +104,7 @@ def run(start_date: int, end_date: int):
                     "end_time": values["end_time"],
                     "manager": values["manager"],
                     "reference": values["reference"],
+                    "notion_link": notion_link,
                 }
             )
 
