@@ -33,8 +33,8 @@ def set_properties(page_values):
 
 # 행사 ID로 조회 후 결과가 있을 경우 ID를 리턴 / 없으면 False를 리턴
 @logger.wrapped_logging
-def get_notion_properties_by_event_id(event_id, headers, database_id):
-    query_url = f"https://api.notion.com/v1/databases/{database_id}/query"
+def get_notion_properties_by_event_id(event_id, headers, data_source_id):
+    query_url = f"https://api.notion.com/v1/data_sources/{data_source_id}/query"
 
     query = {
         "filter": {
@@ -78,12 +78,12 @@ def get_notion_properties_by_event_id(event_id, headers, database_id):
 
 # 신규 페이지 생성
 @logger.wrapped_logging
-def notion_create_page(database_id, headers, page_values):
+def notion_create_page(data_source_id, headers, page_values):
 
     create_url = "https://api.notion.com/v1/pages"
 
     new_page = {
-        "parent": {"database_id": database_id},
+        "parent": {"type": "data_source_id", "data_source_id": data_source_id},
         "properties": set_properties(page_values),
     }
 
@@ -111,9 +111,9 @@ def notion_update_page(page_id, headers, page_values):
 
 
 # 날짜를 기준으로 행사를 조회하는 쿼리
-def get_notion_properties_by_date(start_date, end_date, headers, database_id):
+def get_notion_properties_by_date(start_date, end_date, headers, data_source_id):
 
-    query_url = f"https://api.notion.com/v1/databases/{database_id}/query"
+    query_url = f"https://api.notion.com/v1/data_sources/{data_source_id}/query"
 
     query = {
         "filter": {

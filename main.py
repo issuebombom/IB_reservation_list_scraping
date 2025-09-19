@@ -59,7 +59,7 @@ def run(start_date: int, end_date: int):
             )
 
         # 행사 번호를 통해 이미 노션에 등록 유무를 확인
-        notion_properties = notion_api.get_notion_properties_by_event_id(values["event_number"], NOTION_API_HEADERS, NOTION_DATABASE_ID)
+        notion_properties = notion_api.get_notion_properties_by_event_id(values["event_number"], NOTION_API_HEADERS, NOTION_DATA_SOURCE_ID)
 
         # 노션에 이미 등재된 경우 업데이트
         if notion_properties:
@@ -92,7 +92,7 @@ def run(start_date: int, end_date: int):
 
         else:
             # 데이터베이스에 신규 page 생성
-            notion_link = notion_api.notion_create_page(NOTION_DATABASE_ID, NOTION_API_HEADERS, values)
+            notion_link = notion_api.notion_create_page(NOTION_DATA_SOURCE_ID, NOTION_API_HEADERS, values)
 
             # 신규 생성 내역 기록
             alarm_properties["new"].append(
@@ -149,11 +149,13 @@ if __name__ == "__main__":
         SESSION_ID = cookies["JSESSIONID"]  # update 필요
         NOTION_API_KEY = ENV["NOTION_API_KEY"]
         NOTION_DATABASE_ID = ENV["NOTION_DATABASE_ID"]
+        NOTION_DATA_SOURCE_ID = ENV["NOTION_DATA_SOURCE_ID"]
+        NOTION_API_VERSION = ENV["NOTION_API_VERSION"]
 
         NOTION_API_HEADERS = {
             "Authorization": "Bearer " + NOTION_API_KEY,
             "Content-Type": "application/json",
-            "Notion-Version": "2022-06-28",
+            "Notion-Version": NOTION_API_VERSION,
         }
 
         slack_schedule_bot = SlackAPI(ENV["SLACK_SCHEADULE_CHANNEL_ID"], ENV["SLACK_BOT_TOKEN"])
