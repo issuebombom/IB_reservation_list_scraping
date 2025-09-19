@@ -109,7 +109,7 @@ class SlackAPI:
             )
             manager = content["manager"]
             reference = self.__replace_list_to_str(content["reference"])  # list to str
-            notion_link = contents["notion_link"]
+            notion_link = content["notion_link"]
 
             prompt += textwrap.dedent(
                 f"""\
