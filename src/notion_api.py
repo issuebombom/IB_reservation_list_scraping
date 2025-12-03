@@ -92,8 +92,8 @@ def notion_create_page(data_source_id, headers, page_values):
     res.raise_for_status()
 
     notion_link = res.json()["url"]  # 생성 링크 출력
-    print(res, f"[New] 페이지 생성 완료 - {page_values['event_name']} | {page_values['start_time']}")
     return notion_link
+    # print(res, f"[New] 페이지 생성 완료 - {page_values['event_name']} | {page_values['start_time']}")
 
 
 # 특정 페이지를 업데이트
