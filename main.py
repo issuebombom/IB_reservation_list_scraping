@@ -1,9 +1,11 @@
 from src import scraper, notion_api
 from src.logger import get_logger
 from src.slack_api import SlackAPI
+from src.utils import listing_month_date
 from config import ENV
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
+
 from tqdm import tqdm
 
 
@@ -18,7 +20,8 @@ def run(start_date: int, end_date: int):
     logger.info("=====START SCRAPE=====")
     # 스케줄 수집
     results = []
-    for i in range(start_date, end_date + 1):
+    # ! NOTE: 202512가 start_date면 end_date는 202513이 되는 문제 해결함
+    for i in listing_month_date(start_date, end_date):
         result = scraper.get_schedule(GW_SCHEDULE_URL, GW_SCHEDULE_REFERER, SESSION_ID, i)
         results += result["rows"]
 
@@ -35,6 +38,7 @@ def run(start_date: int, end_date: int):
         start_time_dt = dt.strptime(row["EVENT_DATE"] + start_time.replace(":", ""), "%Y%m%d%H%M")
         end_time_dt = dt.strptime(row["EVENT_DATE"] + end_time.replace(":", ""), "%Y%m%d%H%M")
 
+        # NOTE: 현재 시각 기준으로 지난 행사는 업데이트하지 않는다.
         if start_time_dt < dt.now():
             continue
         # test용: if start_time_dt < dt.strptime('2024-08-25', '%Y-%m-%d'): continue

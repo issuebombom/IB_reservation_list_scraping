@@ -92,8 +92,8 @@ def notion_create_page(data_source_id, headers, page_values):
     res.raise_for_status()
 
     notion_link = res.json()["url"]  # 생성 링크 출력
+    print(res, f"[New] 페이지 생성 완료 - {page_values['event_name']} | {page_values['start_time']}")
     return notion_link
-    # print(res, f"[New] 페이지 생성 완료 - {page_values['event_name']} | {page_values['start_time']}")
 
 
 # 특정 페이지를 업데이트
@@ -126,6 +126,7 @@ def get_notion_properties_by_date(start_date, end_date, headers, data_source_id)
                     "property": "날짜",
                     "date": {"on_or_before": end_date + "T23:59:59+09:00", "time_zone": "Asia/Seoul"},
                 },
+                # ! NOTE: 옵션으로 선택할 수 있게 하면 좋겠음
                 {"property": "예약상태", "select": {"does_not_equal": "CXL"}},
                 # NOTE: notion api 서버와 local간 timezone 이슈로 사용 중지
                 # {"property": "상태", "formula": {"string": {"does_not_equal": "⚫️ 종료"}}},
@@ -134,13 +135,28 @@ def get_notion_properties_by_date(start_date, end_date, headers, data_source_id)
         "sorts": [{"property": "날짜", "direction": "ascending"}],
     }
 
-    data = json.dumps(query)
-    res = requests.post(query_url, headers=headers, data=data)
-    res.raise_for_status()
+    total_results = []
+    cursor = None
 
-    results = res.json()["results"]
+    while True:
+        if cursor:
+            query["start_cursor"] = cursor  # 페이지네이션
+        data = json.dumps(query)
+        res = requests.post(query_url, headers=headers, data=data)
+        res.raise_for_status()
 
-    # 값이 있다면
+        res_json = res.json()
+        total_results.extend(res_json["results"])
+
+        if not res_json["has_more"]:
+            break
+        cursor = res_json["next_cursor"]
+
+    return total_results
+
+
+def preprocess_notion_properties(results, start_date, end_date):
+    """NOTE: 노션에서 조회한 행사 결과를 전처리한다."""
     notion_properties = {
         "search_start_date": start_date,  # str 검색날짜(시작)
         "search_end_date": end_date,  # str 검색날짜(끝)
@@ -150,8 +166,6 @@ def get_notion_properties_by_date(start_date, end_date, headers, data_source_id)
         for result in results:
             notion_properties["properties"].append(
                 {
-                    "start_search_date": start_date,  # str 검색날짜(시작)
-                    "end_search_date": end_date,  # str 검색날짜(끝)
                     "event_number": result["properties"]["행사번호"]["number"],
                     "event_name": result["properties"]["이름"]["title"][0]["plain_text"],
                     "start_time": result["properties"]["날짜"]["date"]["start"].split(".")[0] + "Z",  # '2024-06-10T18:00:00Z'

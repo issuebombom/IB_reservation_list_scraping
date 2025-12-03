@@ -15,7 +15,8 @@ def run(start_date, end_date, driver):
     # screenshot_file_path = f'./screenshot/schedule_screenshot_{start_date[:7]}.png'
     # scraper.get_schedule_screenshot(driver, screenshot_file_path, quit=True)
 
-    notion_properties = notion_api.get_notion_properties_by_date(start_date, end_date, NOTION_API_HEADERS, NOTION_DATA_SOURCE_ID)
+    results = notion_api.get_notion_properties_by_date(start_date, end_date, NOTION_API_HEADERS, NOTION_DATA_SOURCE_ID)
+    notion_properties = notion_api.preprocess_notion_properties(results, start_date, end_date)
     subject, prompt = slack_daliy_schedule_report_bot.search_event_result_alarm_prompt(notion_properties)
     slack_daliy_schedule_report_bot.slack_alarm_bot(subject, prompt)
 
